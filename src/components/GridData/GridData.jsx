@@ -139,6 +139,7 @@ EnhancedTableToolbar.propTypes = {
 const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
+    marginTop: theme.spacing(2),
   },
   paper: {
     width: "100%",
@@ -163,7 +164,7 @@ const useStyles = makeStyles((theme) => ({
 export default function GridData() {
   const classes = useStyles();
   const [order, setOrder] = React.useState("asc");
-  const [orderBy, setOrderBy] = React.useState("calories");
+  const [orderBy, setOrderBy] = React.useState("title");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
@@ -197,24 +198,8 @@ export default function GridData() {
     setOrderBy(property);
   };
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
-    }
-
-    setSelected(newSelected);
+  const handleClick = (event, id) => {
+    console.log(id);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -268,7 +253,7 @@ export default function GridData() {
                         component="th"
                         id={labelId}
                         scope="row"
-                        padding="none"
+                        padding="normal"
                       >
                         {row.mal_id}
                       </TableCell>
