@@ -1,10 +1,13 @@
-import React from 'react';
-import error404 from "../../public/404.svg";
+import React from "react";
+import imageError from "../assets/imageError.svg";
+import "./page404.scss"
 
-const Pagina404 = () => {
-    return(
-        <main>
-            <img src={error404} alt=""/>
-        </main>
-    )
-}
+const Page404 = () => {
+  return (
+    <main className="not-found">
+      <img src={imageError} alt="error404" height="1000" />
+    </main>
+  );
+};
+
+export default Page404;
