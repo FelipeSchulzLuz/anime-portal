@@ -7,10 +7,9 @@ import InputBase from "@material-ui/core/InputBase";
 import { alpha, makeStyles } from "@material-ui/core/styles";
 import MenuIcon from "@material-ui/icons/Menu";
 import SearchIcon from "@material-ui/icons/Search";
-import { Button } from "@material-ui/core";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -88,20 +87,15 @@ export default function Header() {
     <div className="header">
       <AppBar position="static">
         <Toolbar>
-          <Button
-            aria-controls="simple-menu"
-            aria-haspopup="true"
+          <IconButton
+            edge="start"
+            className="menuButton"
+            color="inherit"
+            aria-label="open drawer"
             onClick={handleClick}
           >
-            <IconButton
-              edge="start"
-              className="menuButton"
-              color="inherit"
-              aria-label="open drawer"
-            >
-              <MenuIcon />
-            </IconButton>
-          </Button>
+            <MenuIcon />
+          </IconButton>
           <Menu
             id="simple-menu"
             anchorEl={anchorEl}
@@ -115,16 +109,13 @@ export default function Header() {
               </Link>
             </MenuItem>
             <MenuItem onClick={handleClose}>
-              <Link
-                to="/animes"
-                className="title"
-              >
+              <Link to="/animes" className="title">
                 Anime List
               </Link>
             </MenuItem>
           </Menu>
           <Typography className={classes.title} variant="h6" noWrap>
-           Anime Fan Site
+            Anime Fan Site
           </Typography>
 
           <div className={classes.search}>
