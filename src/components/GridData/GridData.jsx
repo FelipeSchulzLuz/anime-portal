@@ -10,8 +10,8 @@ import Paper from "@material-ui/core/Paper";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
 import { useEffect } from "react";
-import { connect, useDispatch } from "react-redux";
-import { Route } from "react-router-dom";
+import { connect } from "react-redux";
+import { useHistory } from "react-router-dom";
 import { actions } from "../../actions/animes";
 import { getComparator, stableSort } from "./../../utils/utils";
 import { EnhancedTableToolbar } from "./../EnhancedTableToolbar/EnhancedTableToolbar";
@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function GridData() {
+function GridData(state) {
   const classes = useStyles();
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("title");
@@ -52,24 +52,22 @@ function GridData() {
   const [dense, setDense] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [data, setData] = useState([]);
-
-  const animeList = async () => {
-    const result = await getAnimeList()
-    setData(result);
-  };
-
+  const history = useHistory();
   //////////////////////////////////////////////
 
   useEffect(() => {
-    if (data.length === 0) {
-      animeList();
-    }
-    // setData(props.anime);
-    console.log("DATA IN ", data);
-  });
-  console.log("DATA OUT", data);
+    animeList();
+    console.log("DATA ", data);
+    console.log("STATE ", state);
+  }, []);
 
   /////////////////////////////////////////////
+
+  const animeList = async () => {
+    const result = await getAnimeList();
+    console.log(result);
+    setData(result);
+  };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -79,6 +77,7 @@ function GridData() {
 
   const handleClick = (event, id) => {
     console.log(id);
+    history.push(`/anime/${id}`);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -122,27 +121,24 @@ function GridData() {
                 .map((row, index) => {
                   const labelId = `enhanced-table-checkbox-${index}`;
                   return (
-                    <Route key={row.mal_id} exact path={`/anime/${row.mal_id}`}>
-                      <TableRow
-                        hover
-                        onClick={(event) => handleClick(event, row.mal_id)}
-                        tabIndex={-1}
-                        key={row.mal_id}
-                        to={`/anime/${row.mal_id}`}
+                    <TableRow
+                      hover
+                      onClick={(event) => handleClick(event, row.mal_id)}
+                      tabIndex={-1}
+                      key={row.mal_id}
+                    >
+                      <TableCell
+                        component="th"
+                        id={labelId}
+                        scope="row"
+                        padding="normal"
                       >
-                        <TableCell
-                          component="th"
-                          id={labelId}
-                          scope="row"
-                          padding="normal"
-                        >
-                          {row.mal_id}
-                        </TableCell>
-                        <TableCell align="left">{row.title}</TableCell>
-                        <TableCell align="right">{row.season_year}</TableCell>
-                        <TableCell align="left">{row.start_date}</TableCell>
-                      </TableRow>
-                    </Route>
+                        {row.mal_id}
+                      </TableCell>
+                      <TableCell align="left">{row.title}</TableCell>
+                      <TableCell align="right">{row.season_year}</TableCell>
+                      <TableCell align="left">{row.start_date}</TableCell>
+                    </TableRow>
                   );
                 })}
               {emptyRows > 0 && (
@@ -177,7 +173,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = {
-  anime: actions.getAnimeList(),
+  GetAnimeList: () => actions.getAnimeList(),
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(GridData);
