@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import clsx from "clsx";
 import { lighten, makeStyles } from "@material-ui/core/styles";
@@ -16,7 +16,10 @@ import Paper from "@material-ui/core/Paper";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
 import { useEffect } from "react";
-import axios from "axios";
+import { connect, useDispatch, useSelector } from "react-redux";
+import { Route } from "react-router-dom";
+import { actions } from "../../actions/animes";
+import { getAnimeList } from "./../../api/api";
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -50,7 +53,6 @@ const headCells = [
   { id: "season_year", label: "Season Year", minWidth: 50, numeric: true },
   { id: "start_date", label: "Start Date", minWidth: 50 },
 ];
-
 function EnhancedTableHead(props) {
   const { classes, order, orderBy, onRequestSort } = props;
   const createSortHandler = (property) => (event) => {
@@ -161,36 +163,20 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function GridData() {
+function GridData(props, getAnimeList, setAnimeCode) {
   const classes = useStyles();
-  const [order, setOrder] = React.useState("asc");
-  const [orderBy, setOrderBy] = React.useState("title");
-  const [selected, setSelected] = React.useState([]);
-  const [page, setPage] = React.useState(0);
-  const [dense, setDense] = React.useState(false);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  const [data, setData] = React.useState([]);
+  const [order, setOrder] = useState("asc");
+  const [orderBy, setOrderBy] = useState("title");
+  const [selected, setSelected] = useState([]);
+  const [page, setPage] = useState(0);
+  const [dense, setDense] = useState(false);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [data, setData] = useState([]);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    async function fetchData() {
-      const options = {
-        method: "GET",
-        url: "https://jikan1.p.rapidapi.com/user/Nekomata1037/animelist/all",
-        headers: {
-          "x-rapidapi-key":
-            "aabc1c15b8msh3e91db72b837037p1a1acdjsn5785d9abec05",
-          "x-rapidapi-host": "jikan1.p.rapidapi.com",
-        },
-      };
-      try {
-        const data = await axios.request(options);
-        setData(data.data.anime);
-      } catch (e) {
-        console.log(e);
-      }
-    }
-    fetchData();
-  }, []);
+    dispatch(actions.getAnimeList);
+  });
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -243,24 +229,27 @@ export default function GridData() {
                 .map((row, index) => {
                   const labelId = `enhanced-table-checkbox-${index}`;
                   return (
-                    <TableRow
-                      hover
-                      onClick={(event) => handleClick(event, row.mal_id)}
-                      tabIndex={-1}
-                      key={row.mal_id}
-                    >
-                      <TableCell
-                        component="th"
-                        id={labelId}
-                        scope="row"
-                        padding="normal"
+                    <Route key={row.mal_id} exact path={`/anime/${row.mal_id}`}>
+                      <TableRow
+                        hover
+                        onClick={(event) => handleClick(event, row.mal_id)}
+                        tabIndex={-1}
+                        key={row.mal_id}
+                        to={`/anime/${row.mal_id}`}
                       >
-                        {row.mal_id}
-                      </TableCell>
-                      <TableCell align="left">{row.title}</TableCell>
-                      <TableCell align="right">{row.season_year}</TableCell>
-                      <TableCell align="left">{row.start_date}</TableCell>
-                    </TableRow>
+                        <TableCell
+                          component="th"
+                          id={labelId}
+                          scope="row"
+                          padding="normal"
+                        >
+                          {row.mal_id}
+                        </TableCell>
+                        <TableCell align="left">{row.title}</TableCell>
+                        <TableCell align="right">{row.season_year}</TableCell>
+                        <TableCell align="left">{row.start_date}</TableCell>
+                      </TableRow>
+                    </Route>
                   );
                 })}
               {emptyRows > 0 && (
@@ -288,3 +277,14 @@ export default function GridData() {
     </div>
   );
 }
+
+const mapStateToProps = (state) => ({
+  animes: state.animes,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  GetAnimeList: () => dispatch(actions.GetAnimeList),
+  SetAnimeCode: () => dispatch(actions.SetAnimeCode),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(GridData);
