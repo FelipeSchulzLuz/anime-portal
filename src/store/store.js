@@ -1,6 +1,22 @@
 import { createStore } from "redux";
 import { reducers } from "../reducers/animes";
+import { applyMiddleware } from 'redux'
+import { composeWithDevTools } from 'redux-devtools-extension'
+import { configureStore } from "@reduxjs/toolkit";
+// import thunkMiddleware from 'redux-thunk'
 
-const store = createStore(reducers);
+// const composedEnhancer = composeWithDevTools(applyMiddleware(thunkMiddleware))
 
-export { store }
+const store = configureStore({
+    reducers: reducers,
+})
+export default store;
+
+
+
+
+
+
+// const store = createStore(reducers);
+// export { store }
+//////////
