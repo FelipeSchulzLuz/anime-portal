@@ -8,13 +8,13 @@ const INITIAL_STATE = {
 
 const reducers = (state = INITIAL_STATE, action) => {
     switch (action.type) {
-        case actionsTypes.SET_ANIME_LIST:
+        case actionsTypes.ANIME_LIST:
             return { ...state, anime: action.anime }
 
-        case actionsTypes.SET_ANIME_CODE:
+        case actionsTypes.ANIME_CODE:
             return { ...state, animeCode: action.animeCode }
 
-        case actionsTypes.GET_ANIME_DETAIL:
+        case actionsTypes.ANIME_DETAIL:
             return { ...state, animeSelected: action.animeSelected }
 
         default:

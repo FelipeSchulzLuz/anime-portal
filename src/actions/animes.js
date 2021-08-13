@@ -1,17 +1,11 @@
 import { actionsTypes } from '../constants/animes'
 
 const actions = {
-    getAnimeList: () => ({
-        type: actionsTypes.GET_ANIME_LIST,
-    }),
+    animeList: () => { return { type: actionsTypes.ANIME_LIST } },
 
-    setAnimeCode: () => ({
-        type: actionsTypes.SET_ANIME_CODE,
-    }),
+    animeCode: () => { return { type: actionsTypes.ANIME_CODE } },
 
-    getAnimeDetail: () => ({
-        type: actionsTypes.GET_ANIME_DETAIL,
-    })
+    animeDetail: () => { return { type: actionsTypes.ANIME_DETAIL } },
 }
 
 export { actions };

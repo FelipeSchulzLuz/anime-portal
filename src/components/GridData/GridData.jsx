@@ -10,13 +10,13 @@ import Paper from "@material-ui/core/Paper";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
 import { useEffect } from "react";
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { actions } from "../../actions/animes";
 import { getComparator, stableSort } from "./../../utils/utils";
 import { EnhancedTableToolbar } from "./../EnhancedTableToolbar/EnhancedTableToolbar";
 import { EnhancedTableHead } from "./../EnhancedTableHead/EnhancedTableHead";
-import { getAnimeList } from "./../../api/api";
+import { getAnimeList, getAnimeDetail } from "./../../api/api";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function GridData(state) {
+const GridData = ({ ...state }) => {
   const classes = useStyles();
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("title");
@@ -53,19 +53,18 @@ function GridData(state) {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [data, setData] = useState([]);
   const history = useHistory();
-  //////////////////////////////////////////////
+  const dispatch = useDispatch();
 
   useEffect(() => {
     animeList();
-    console.log("DATA ", data);
-    console.log("STATE ", state);
   }, []);
-
-  /////////////////////////////////////////////
 
   const animeList = async () => {
     const result = await getAnimeList();
-    console.log(result);
+    dispatch({
+      type: actions.animeList(),
+      anime: result,
+    });
     setData(result);
   };
 
@@ -75,8 +74,12 @@ function GridData(state) {
     setOrderBy(property);
   };
 
-  const handleClick = (event, id) => {
-    console.log(id);
+  const handleClick = async (event, id) => {
+    const result = await getAnimeDetail(id);
+    dispatch({
+      type: actions.animeCode(),
+      animeSelected: {...result},
+    });
     history.push(`/anime/${id}`);
   };
 
@@ -125,6 +128,7 @@ function GridData(state) {
                       hover
                       onClick={(event) => handleClick(event, row.mal_id)}
                       tabIndex={-1}
+                      name={row.mal_id}
                       key={row.mal_id}
                     >
                       <TableCell
@@ -165,15 +169,13 @@ function GridData(state) {
       />
     </div>
   );
-}
+};
 
 const mapStateToProps = (state) => ({
-  anime: state.anime,
-  animeCode: state.animeCode,
+  anime: state,
+  animeCode: state.animeCode
 });
 
-const mapDispatchToProps = {
-  GetAnimeList: () => actions.getAnimeList(),
-};
+const mapDispatchToProps = {};
 
 export default connect(mapStateToProps, mapDispatchToProps)(GridData);
